@@ -1,0 +1,30 @@
+#!/usr/bin/python3
+
+import os
+import subprocess
+import sys
+
+fname = __file__.split("/")[-1]
+
+def err():
+    print(f"Usage: {fname} <directory>")
+    print("Runs tensorflow container with local 'directory' mapped to /host/ inside the container.")
+    print(f"Example: '{fname} /home'")
+    exit(1)
+
+
+if len(sys.argv) <= 1 or len(sys.argv) > 2:
+    err()
+
+path = sys.argv[1]
+
+if not os.path.exists(path):
+    print("Wrong path")
+    err()
+
+abspath = os.path.abspath(path)
+
+#cmd = f"docker run -it --rm --gpus all -v {abspath}/:/host/ -u $(id -u):$(id -g) tensorflow/tensorflow:latest-gpu-py3 bash"
+cmd = f"docker run -it --rm --gpus all -v {abspath}/:/host/ -u $(id -u):$(id -g) cuda-tensorflow"
+
+subprocess.call(cmd, shell=True)
